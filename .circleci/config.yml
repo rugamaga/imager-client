@@ -1,0 +1,135 @@
+version: 2
+
+anchors:
+  - &prd
+    environment:
+      META_GCLOUD_SERVICE_KEY: ${PRD_GCLOUD_SERVICE_KEY}
+      GOOGLE_CLOUD_KEYFILE_JSON: .credentials/kubernetes@rugamaga-dev.json
+      GCP_PROJECT_ID: rugamaga-dev
+      CLUSTER_NAME: gke-rugamaga-dev
+      CLUSTER_ZONE: asia-northeast1
+      KUSTOMIZATION_ENV: prd
+      CONTAINER_IMAGE_NAME: imager-client
+      CONTAINER_REGISTRY_URL: gcr.io/rugamaga-dev
+      PRUNE_LABEL: imager-client
+
+  - &defaults
+    docker:
+      - image: google/cloud-sdk:268.0.0
+
+  - &build
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: create credential file for gcloud
+          command: eval echo $META_GCLOUD_SERVICE_KEY > $GOOGLE_CLOUD_KEYFILE_JSON
+      - run:
+          name: activate credential file for gcloud
+          command: gcloud auth activate-service-account --key-file $GOOGLE_CLOUD_KEYFILE_JSON
+      - run:
+          name: configure docker authentication by using gcloud
+          command: gcloud auth configure-docker
+      - run:
+          name: Build Dockerfile
+          command: docker build -t ${CONTAINER_IMAGE_NAME}:latest .
+      - run:
+          name: Assign tag for docker image
+          command: docker tag ${CONTAINER_IMAGE_NAME}:latest ${CONTAINER_REGISTRY_URL}/${CONTAINER_IMAGE_NAME}:${CIRCLE_SHA1}
+      - run:
+          name: Push docker image to container registry
+          command: docker push ${CONTAINER_REGISTRY_URL}/${CONTAINER_IMAGE_NAME}:${CIRCLE_SHA1}
+
+  - &diff
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: create credential file for gcloud
+          command: eval echo $META_GCLOUD_SERVICE_KEY > $GOOGLE_CLOUD_KEYFILE_JSON
+      - run:
+          name: activate credential file for gcloud
+          command: gcloud auth activate-service-account --key-file $GOOGLE_CLOUD_KEYFILE_JSON
+      - run:
+          name: set project for gcloud
+          command: gcloud config set project ${GCP_PROJECT_ID}
+      - run:
+          name: get credentials for kubectl by using gcloud
+          command: gcloud container clusters get-credentials --zone ${CLUSTER_ZONE} ${CLUSTER_NAME}
+      - run:
+          name: Generate imager-client-secret.env
+          command: manifests/imager-client-secret.sh > manifests/imager-client-secret.env
+      - run:
+          name: Generate kustomization.yml
+          command: manifests/kustomization.sh > manifests/kustomization.yml
+      - run:
+          name: Show manifests diff
+          command: |
+            # kubectl diffは、差分がなくエラーもないときに0を返し
+            # 差分があるか、エラーがあるときには1を返す
+            # 1. 差分がでるだけでCircleCIとしてJobFailになるのは不味い
+            # 2. しかしエラーがあるときにJobSuccessになるのも不味い
+            # そこでエラーを事前にkubectl apply --server-dry-runによって検出し
+            # diffはその後set +e(1が帰ってきても失敗扱いしない)で実行する。
+            kubectl apply -k manifests/ --server-dry-run --prune -l pruneLabel=${PRUNE_LABEL}
+            # ここまできたらエラーがあってもなくても強制的に成功扱いする
+            set +e
+            kubectl diff -k manifests/
+            exit 0
+
+  - &apply
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: create credential file for gcloud
+          command: eval echo $META_GCLOUD_SERVICE_KEY > $GOOGLE_CLOUD_KEYFILE_JSON
+      - run:
+          name: activate credential file for gcloud
+          command: gcloud auth activate-service-account --key-file $GOOGLE_CLOUD_KEYFILE_JSON
+      - run:
+          name: set project for gcloud
+          command: gcloud config set project ${GCP_PROJECT_ID}
+      - run:
+          name: get credentials for kubectl by using gcloud
+          command: gcloud container clusters get-credentials --zone ${CLUSTER_ZONE} ${CLUSTER_NAME}
+      - run:
+          name: Generate imager-client-secret.env
+          command: manifests/imager-client-secret.sh > manifests/imager-client-secret.env
+      - run:
+          name: Generate kustomization.yml
+          command: manifests/kustomization.sh > manifests/kustomization.yml
+      - run:
+          name: Apply manifests
+          command: kubectl apply -k manifests/ --prune -l pruneLabel=${PRUNE_LABEL}
+
+jobs:
+  build_prd:
+    <<: *prd
+    <<: *build
+
+  diff_prd:
+    <<: *prd
+    <<: *diff
+
+  apply_prd:
+    <<: *prd
+    <<: *apply
+
+workflows:
+  version: 2
+
+  build:
+    jobs:
+      - build_prd
+      - diff_prd
+
+  prd:
+    jobs:
+      - apply_prd:
+          filters:
+            tags:
+              only: /^PRD\/v.*$/
+            branches:
+              ignore: /.*/

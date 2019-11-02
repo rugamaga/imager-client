@@ -1,0 +1,34 @@
+{
+  "name": "imager-client",
+  "private": true,
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [
+    "hyperapp",
+    "parceljs",
+    "bundle"
+  ],
+  "author": "ntgaura",
+  "license": "MIT",
+  "repository": "ntgaura/imager-client",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development parcel index.html",
+    "build": "cross-env NODE_ENV=production parcel build index.html --public-url ./ -d build --no-cache"
+  },
+  "dependencies": {
+    "hyperapp": "^1.2.10",
+    "hyperapp-fx": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.0",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/preset-env": "^7.5.0",
+    "autoprefixer": "^9.6.1",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "cross-env": "^5.2.0",
+    "parcel-bundler": "^1.12.3",
+    "postcss-nested": "^4.1.2",
+    "postcss-variables": "^1.1.1"
+  }
+}

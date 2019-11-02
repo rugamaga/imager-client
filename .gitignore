@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+
+# dist
+dist/
+build/
+.cache/
+
+# misc
+*.log*
+.DS_Store
+
+# credentials
+.credentials
