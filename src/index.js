@@ -7,9 +7,9 @@ import { RadioList } from './RadioList.js';
 import { ImageBox } from './ImageBox.js';
 import { TagBox } from './TagBox.js';
 
-const api = "https://server.image.rugamaga.dev/";
-const images_endpoint = "https://server.image.rugamaga.dev/images";
-const thumbnails_endpoint = "https://server.image.rugamaga.dev/thumbnails";
+const api = "https://image.rugamaga.dev";
+const images_endpoint = "https://image.rugamaga.dev/images";
+const thumbnails_endpoint = "https://image.rugamaga.dev/thumbnails";
 
 const state = {
   images: [],
@@ -29,14 +29,14 @@ const actions = {
   requestImages: () => (state) => [
     action("setImageLoading", true),
     http(
-      `${api}images/?tag=${state.tag}&order=${state.order}&adult=${state.adult}&offset=${state.images.length}`,
+      `${api}/images/?tag=${state.tag}&order=${state.order}&adult=${state.adult}&offset=${state.images.length}`,
       'imagesFetched'
     )
   ],
   requestSuggestTags: () => (state) => [
     action("setSuggestTags", []),
     http(
-      `${api}tags/?prefix=${state.tag.split(/\s+/).slice(-1)[0]}`,
+      `${api}/tags/?prefix=${state.tag.split(/\s+/).slice(-1)[0]}`,
       'suggestTagsFetched'
     )
   ],
