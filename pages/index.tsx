@@ -5,7 +5,7 @@ import fetch from 'unfetch'
 
 import { NextLoader } from '../components/NextLoader';
 import { SearchBox } from '../components/SearchBox';
-// import { RadioList } from './RadioList.js';
+import { RadioList } from '../components/RadioList';
 // import { ImageBox } from './ImageBox.js';
 // import { TagBox } from './TagBox.js';
 
@@ -19,7 +19,6 @@ function useDebounce(fn: () => any, ms: number = 0, args: any[] = []) {
   }, args);
 };
 
-const RadioList = ({group, names, active, onclick}) => <div />
 const ImageBox = ({src, link, tags}) => <div />
 const TagBox = ({tags}) => <div />
 
@@ -103,7 +102,7 @@ export default () => {
       group="order"
       names={['new', 'old', 'random']}
       active={state.order}
-      onclick={handleOrderRadio}
+      onClick={handleOrderRadio}
     />
 
   const AdultList = () =>
@@ -111,7 +110,7 @@ export default () => {
       group="adult"
       names={['nonadult', 'adult', 'nontags', 'all']}
       active={state.adult}
-      onclick={handleAdultRadio}
+      onClick={handleAdultRadio}
     />
 
   return (
