@@ -4,7 +4,7 @@ import Head from 'next/head'
 import fetch from 'unfetch'
 
 import { NextLoader } from '../components/NextLoader';
-// import { SearchBox } from './SearchBox.js';
+import { SearchBox } from '../components/SearchBox';
 // import { RadioList } from './RadioList.js';
 // import { ImageBox } from './ImageBox.js';
 // import { TagBox } from './TagBox.js';
@@ -19,7 +19,6 @@ function useDebounce(fn: () => any, ms: number = 0, args: any[] = []) {
   }, args);
 };
 
-const SearchBox = ({value, oninput}) => <div />
 const RadioList = ({group, names, active, onclick}) => <div />
 const ImageBox = ({src, link, tags}) => <div />
 const TagBox = ({tags}) => <div />
@@ -99,13 +98,29 @@ export default () => {
   const imgs = state.images.map( (image) => <ImageBox src={`${thumbnails_endpoint}/${image.name}`} link={`${images_endpoint}/${image.name}`} tags={image.tags} /> );
   const suggest_tags = <TagBox tags={state.suggest_tags} />;
 
+  const OrderList = () =>
+    <RadioList
+      group="order"
+      names={['new', 'old', 'random']}
+      active={state.order}
+      onclick={handleOrderRadio}
+    />
+
+  const AdultList = () =>
+    <RadioList
+      group="adult"
+      names={['nonadult', 'adult', 'nontags', 'all']}
+      active={state.adult}
+      onclick={handleAdultRadio}
+    />
+
   return (
     <div className="container">
       <h1>imager</h1>
       <div className="search">
-        <SearchBox value={state.tag} oninput={handleTagText} />
-        <RadioList group="order" names={['new', 'old', 'random']} active={state.order} onclick={handleOrderRadio} />
-        <RadioList group="adult" names={['nonadult', 'adult', 'nontags', 'all']} active={state.adult} onclick={handleAdultRadio} />
+        <SearchBox value={state.tag} onInput={handleTagText} />
+        <OrderList />
+        <AdultList />
         { suggest_tags }
       </div>
       <div className="result">
