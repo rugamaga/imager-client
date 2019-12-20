@@ -3,7 +3,7 @@ import Head from 'next/head'
 
 import fetch from 'unfetch'
 
-// import { NextLoader } from './NextLoader.js';
+import { NextLoader } from '../components/NextLoader';
 // import { SearchBox } from './SearchBox.js';
 // import { RadioList } from './RadioList.js';
 // import { ImageBox } from './ImageBox.js';
@@ -19,7 +19,6 @@ function useDebounce(fn: () => any, ms: number = 0, args: any[] = []) {
   }, args);
 };
 
-const NextLoader = ({image_loading}) => <div />
 const SearchBox = ({value, oninput}) => <div />
 const RadioList = ({group, names, active, onclick}) => <div />
 const ImageBox = ({src, link, tags}) => <div />
@@ -58,7 +57,8 @@ export default () => {
       ...state
     })
 
-  // TODO: implement feching data from api
+  const handleNextLink = () => {}
+
   const requestSuggestTags = async () => {
     const url = `${api}/tags/?prefix=${state.tag.split(/\s+/).slice(-1)[0]}`
     const res = await fetch(url)
@@ -110,7 +110,7 @@ export default () => {
       </div>
       <div className="result">
         { imgs }
-        <NextLoader image_loading={state.image_loading} />
+        <NextLoader image_loading={state.image_loading} onClick={handleNextLink} />
       </div>
     </div>
   );
