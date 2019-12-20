@@ -6,8 +6,8 @@ import fetch from 'unfetch'
 import { NextLoader } from '../components/NextLoader';
 import { SearchBox } from '../components/SearchBox';
 import { RadioList } from '../components/RadioList';
-// import { ImageBox } from './ImageBox.js';
-// import { TagBox } from './TagBox.js';
+import { ImageBox } from '../components/ImageBox';
+import { TagBox } from '../components/TagBox';
 
 function useDebounce(fn: () => any, ms: number = 0, args: any[] = []) {
   useEffect(() => {
@@ -18,9 +18,6 @@ function useDebounce(fn: () => any, ms: number = 0, args: any[] = []) {
     };
   }, args);
 };
-
-const ImageBox = ({src, link, tags}) => <div />
-const TagBox = ({tags}) => <div />
 
 const api = "https://image.rugamaga.dev";
 const images_endpoint = "https://image.rugamaga.dev/images";
@@ -37,24 +34,13 @@ export default () => {
   });
 
   const handleTagText =  ({ target: { value: tag } }) =>
-    setState({
-      tag: tag,
-      images: [],
-      ...state
-    })
+    setState({tag: tag, ...state})
   const handleOrderRadio = ({ target: { value: order } }) =>
-    setState({
-      order: order,
-      images: [],
-      ...state
-    })
+    setState({order: order, ...state})
   const handleAdultRadio = ({ target: { value: adult } }) =>
-    setState({
-      adult: adult,
-      images: [],
-      ...state
-    })
-
+    setState({adult: adult, ...state})
+  const handleTagLink = ({ target: { value: tag } }) =>
+    setState({tag: `${state.tag} ${tag}`, ...state})
   const handleNextLink = () => {}
 
   const requestSuggestTags = async () => {
@@ -94,8 +80,19 @@ export default () => {
     [state.tag, state.order, state.adult]
   )
 
-  const imgs = state.images.map( (image) => <ImageBox src={`${thumbnails_endpoint}/${image.name}`} link={`${images_endpoint}/${image.name}`} tags={image.tags} /> );
-  const suggest_tags = <TagBox tags={state.suggest_tags} />;
+  const imgs = state.images.map( image =>
+    <ImageBox
+      src={`${thumbnails_endpoint}/${image.name}`}
+      link={`${images_endpoint}/${image.name}`}
+      tags={image.tags}
+      onSelectTag={handleTagLink}
+    />
+  )
+  const suggest_tags =
+    <TagBox
+      tags={state.suggest_tags}
+      onSelectTag={handleTagLink}
+    />;
 
   const OrderList = () =>
     <RadioList
