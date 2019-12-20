@@ -40,7 +40,16 @@ export default () => {
   const handleAdultRadio = ({ target: { value: adult } }) =>
     setState({adult: adult, ...state})
   const handleTagLink = ({ target: { value: tag } }) =>
-    setState({tag: `${state.tag} ${tag}`, ...state})
+    setState({
+      tag:
+        state
+          .tag
+          .split(/\s+/)
+          .filter(item => item.trim())
+          .concat([tag])
+          .join(' '),
+      ...state
+    })
   const handleNextLink = () => {}
 
   const requestSuggestTags = async () => {
