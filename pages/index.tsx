@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 
+import fetch from 'unfetch'
+
 // import { NextLoader } from './NextLoader.js';
 // import { SearchBox } from './SearchBox.js';
 // import { RadioList } from './RadioList.js';
@@ -57,17 +59,39 @@ export default () => {
     })
 
   // TODO: implement feching data from api
-  const requestSuggestTags = (state) => {}
-  const requestImages = (state) => {}
+  const requestSuggestTags = async () => {
+    const url = `${api}/tags/?prefix=${state.tag.split(/\s+/).slice(-1)[0]}`
+    const res = await fetch(url)
+    const { images } = await res.json()
+    setState({
+      images: state.images.concat(images),
+      image_loading: false,
+      ...state
+    })
+  }
+  const requestImages = async () => {
+    setState({
+      image_loading: true,
+      ...state
+    })
+    const url = `${api}/images/?tag=${state.tag}&order=${state.order}&adult=${state.adult}&offset=${state.images.length}`
+    const res = await fetch(url)
+    const { images } = await res.json()
+    setState({
+      images: state.images.concat(images),
+      image_loading: false,
+      ...state
+    })
+  }
 
   useDebounce(
-    () => requestSuggestTags(state),
+    requestSuggestTags,
     100,
     [state.tag, state.order, state.adult]
   )
 
   useDebounce(
-    () => requestImages(state),
+    requestImages,
     400,
     [state.tag, state.order, state.adult]
   )
