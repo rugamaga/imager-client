@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 
 // import { NextLoader } from './NextLoader.js';
@@ -6,6 +6,16 @@ import Head from 'next/head'
 // import { RadioList } from './RadioList.js';
 // import { ImageBox } from './ImageBox.js';
 // import { TagBox } from './TagBox.js';
+
+function useDebounce(fn: () => any, ms: number = 0, args: any[] = []) {
+  useEffect(() => {
+    const handle = setTimeout(fn.bind(null, args), ms);
+
+    return () => {
+      clearTimeout(handle);
+    };
+  }, args);
+};
 
 const NextLoader = ({image_loading}) => <div />
 const SearchBox = ({value, oninput}) => <div />
@@ -27,10 +37,40 @@ export default () => {
     image_loading: false
   });
 
-  // TODO: use some hook to handling events.
-  const handleTagText = () => {}
-  const handleOrderRadio = () => {}
-  const handleAdultRadio = () => {}
+  const handleTagText =  ({ target: { value: tag } }) =>
+    setState({
+      tag: tag,
+      images: [],
+      ...state
+    })
+  const handleOrderRadio = ({ target: { value: order } }) =>
+    setState({
+      order: order,
+      images: [],
+      ...state
+    })
+  const handleAdultRadio = ({ target: { value: adult } }) =>
+    setState({
+      adult: adult,
+      images: [],
+      ...state
+    })
+
+  // TODO: implement feching data from api
+  const requestSuggestTags = (state) => {}
+  const requestImages = (state) => {}
+
+  useDebounce(
+    () => requestSuggestTags(state),
+    100,
+    [state.tag, state.order, state.adult]
+  )
+
+  useDebounce(
+    () => requestImages(state),
+    400,
+    [state.tag, state.order, state.adult]
+  )
 
   const imgs = state.images.map( (image) => <ImageBox src={`${thumbnails_endpoint}/${image.name}`} link={`${images_endpoint}/${image.name}`} tags={image.tags} /> );
   const suggest_tags = <TagBox tags={state.suggest_tags} />;
