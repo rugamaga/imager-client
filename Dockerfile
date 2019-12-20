@@ -3,7 +3,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . ./
-RUN npm run build
+RUN npm run build && npm run export
 
 FROM nginx:alpine
 
@@ -12,7 +12,7 @@ RUN apk add --no-cache --update apache2-utils
 
 COPY ./nginx/run.sh /
 COPY ./nginx/conf.d/default.conf /etc/nginx/conf.d/
-COPY --from=build-deps /usr/src/app/build /usr/share/nginx/html
+COPY --from=build-deps /usr/src/app/out /usr/share/nginx/html
 
 STOPSIGNAL SIGTERM
 EXPOSE 80
