@@ -28,7 +28,9 @@ export default () => {
   });
 
   // TODO: use some hook to handling events.
-  const event = (type) => {} ;
+  const handleTagText = () => {}
+  const handleOrderRadio = () => {}
+  const handleAdultRadio = () => {}
 
   const imgs = state.images.map( (image) => <ImageBox src={`${thumbnails_endpoint}/${image.name}`} link={`${images_endpoint}/${image.name}`} tags={image.tags} /> );
   const suggest_tags = <TagBox tags={state.suggest_tags} />;
@@ -37,9 +39,9 @@ export default () => {
     <div className="container">
       <h1>imager</h1>
       <div className="search">
-        <SearchBox value={state.tag} oninput={event("handleTagText")} />
-        <RadioList group="order" names={['new', 'old', 'random']} active={state.order} onclick={event("handleOrderRadio")} />
-        <RadioList group="adult" names={['nonadult', 'adult', 'nontags', 'all']} active={state.adult} onclick={event("handleAdultRadio")} />
+        <SearchBox value={state.tag} oninput={handleTagText} />
+        <RadioList group="order" names={['new', 'old', 'random']} active={state.order} onclick={handleOrderRadio} />
+        <RadioList group="adult" names={['nonadult', 'adult', 'nontags', 'all']} active={state.adult} onclick={handleAdultRadio} />
         { suggest_tags }
       </div>
       <div className="result">
