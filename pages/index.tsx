@@ -7,11 +7,11 @@ import Head from 'next/head'
 // import { ImageBox } from './ImageBox.js';
 // import { TagBox } from './TagBox.js';
 
-const NextLoader = () => <div />
-const SearchBox = () => <div />
-const RadioList = () => <div />
-const ImageBox = () => <div />
-const TagBox = () => <div />
+const NextLoader = ({image_loading}) => <div />
+const SearchBox = ({value, oninput}) => <div />
+const RadioList = ({group, names, active, onclick}) => <div />
+const ImageBox = ({src, link, tags}) => <div />
+const TagBox = ({tags}) => <div />
 
 const api = "https://image.rugamaga.dev";
 const images_endpoint = "https://image.rugamaga.dev/images";
@@ -28,21 +28,21 @@ export default () => {
   });
 
   // TODO: use some hook to handling events.
-  const event = () => {} ;
+  const event = (type) => {} ;
 
   const imgs = state.images.map( (image) => <ImageBox src={`${thumbnails_endpoint}/${image.name}`} link={`${images_endpoint}/${image.name}`} tags={image.tags} /> );
   const suggest_tags = <TagBox tags={state.suggest_tags} />;
 
   return (
-    <div class="container">
+    <div className="container">
       <h1>imager</h1>
-      <div class="search">
+      <div className="search">
         <SearchBox value={state.tag} oninput={event("handleTagText")} />
         <RadioList group="order" names={['new', 'old', 'random']} active={state.order} onclick={event("handleOrderRadio")} />
         <RadioList group="adult" names={['nonadult', 'adult', 'nontags', 'all']} active={state.adult} onclick={event("handleAdultRadio")} />
         { suggest_tags }
       </div>
-      <div class="result">
+      <div className="result">
         { imgs }
         <NextLoader image_loading={state.image_loading} />
       </div>
