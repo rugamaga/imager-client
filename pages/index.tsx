@@ -95,6 +95,7 @@ const Index = () => {
 
   const imgs = images.map( image =>
     <ImageBox
+      key={image.name}
       src={`${thumbnails_endpoint}/${image.name}`}
       link={`${images_endpoint}/${image.name}`}
       tags={image.tags}
