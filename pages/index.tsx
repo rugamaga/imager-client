@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 
-import fetch from 'unfetch'
+import '../styles/main.scss'
+
+import fetch from 'isomorphic-unfetch'
 
 import { NextLoader } from '../components/NextLoader';
 import { SearchBox } from '../components/SearchBox';
@@ -19,11 +21,11 @@ function useDebounce(fn: () => any, ms: number = 0, args: any[] = []) {
   }, args);
 };
 
-const api = "https://image.rugamaga.dev";
-const images_endpoint = "https://image.rugamaga.dev/images";
-const thumbnails_endpoint = "https://image.rugamaga.dev/thumbnails";
+const api = "/api";
+const images_endpoint = "/api/images";
+const thumbnails_endpoint = "/api/thumbnails";
 
-export default () => {
+const Index = () => {
   const [state, setState] = useState({
     images: [],
     suggest_tags: [],
@@ -34,46 +36,46 @@ export default () => {
   });
 
   const handleTagText =  ({ target: { value: tag } }) =>
-    setState({tag: tag, ...state})
+    setState({...state, tag: tag})
   const handleOrderRadio = ({ target: { value: order } }) =>
-    setState({order: order, ...state})
+    setState({...state, order: order})
   const handleAdultRadio = ({ target: { value: adult } }) =>
-    setState({adult: adult, ...state})
+    setState({...state, adult: adult})
   const handleTagLink = ({ target: { value: tag } }) =>
     setState({
+      ...state,
       tag:
         state
           .tag
           .split(/\s+/)
           .filter(item => item.trim())
           .concat([tag])
-          .join(' '),
-      ...state
+          .join(' ')
     })
   const handleNextLink = () => {}
 
   const requestSuggestTags = async () => {
-    const url = `${api}/tags/?prefix=${state.tag.split(/\s+/).slice(-1)[0]}`
-    const res = await fetch(url)
-    const { images } = await res.json()
+    const url = `${api}/tags?prefix=${state.tag.split(/\s+/).slice(-1)[0]}`
+    const res = await fetch(url, {credentials: "same-origin"})
+    const tags = await res.json()
     setState({
-      images: state.images.concat(images),
+      ...state,
+      suggest_tags: state.images.concat(tags),
       image_loading: false,
-      ...state
     })
   }
   const requestImages = async () => {
     setState({
+      ...state,
       image_loading: true,
-      ...state
     })
-    const url = `${api}/images/?tag=${state.tag}&order=${state.order}&adult=${state.adult}&offset=${state.images.length}`
-    const res = await fetch(url)
-    const { images } = await res.json()
+    const url = `${api}/images?tag=${state.tag}&order=${state.order}&adult=${state.adult}&offset=${state.images.length}`
+    const res = await fetch(url, {credentials: "same-origin"})
+    const images = await res.json()
     setState({
+      ...state,
       images: state.images.concat(images),
       image_loading: false,
-      ...state
     })
   }
 
@@ -108,7 +110,7 @@ export default () => {
       group="order"
       names={['new', 'old', 'random']}
       active={state.order}
-      onClick={handleOrderRadio}
+      onChange={handleOrderRadio}
     />
 
   const AdultList = () =>
@@ -116,14 +118,14 @@ export default () => {
       group="adult"
       names={['nonadult', 'adult', 'nontags', 'all']}
       active={state.adult}
-      onClick={handleAdultRadio}
+      onChange={handleAdultRadio}
     />
 
   return (
     <div className="container">
       <h1>imager</h1>
       <div className="search">
-        <SearchBox value={state.tag} onInput={handleTagText} />
+        <SearchBox value={state.tag} onChange={handleTagText} />
         <OrderList />
         <AdultList />
         { suggest_tags }
@@ -135,3 +137,5 @@ export default () => {
     </div>
   );
 }
+
+export default Index

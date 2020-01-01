@@ -1,0 +1,143 @@
+@import './reset.scss';
+@import './constants.scss';
+@import './searchbox.scss';
+
+body {
+  width: 100vw;
+  height: 100vh;
+
+  box-sizing: border-box;
+  font-size: $defaultFontSize;
+
+  background-color: $bgColor;
+}
+
+h1, h2 {
+  width: calc(100vw - 4px);
+  height: calc(5vh - 2px);
+
+  box-sizing: border-box;
+  border-radius: 0px 0px 5px 5px;
+  background-color: $headerBgColor;
+
+  margin: 0px 2px 2px 2px;
+
+  color: white;
+
+  opacity: 0.8;
+}
+
+h1 {
+  font-size: 2em;
+  padding-left: 15px;
+}
+
+h2 {
+  font-size: 1.6em;
+}
+
+.search {
+  float: left;
+  padding: 15px;
+  width: calc(20vw - 4px);
+  height: calc(95vh - 4px);
+
+  box-sizing: border-box;
+
+  border-radius: 5px;
+  background-color: $searchBgColor;
+
+  margin: 2px;
+}
+
+.tags {
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  background-color: $accentColor;
+  opacity: 0.8;
+
+  a {
+    cursor: pointer;
+  }
+}
+
+.result {
+  float: left;
+  width: calc(80vw - 4px);
+  height: calc(95vh - 4px);
+  background-color: $resultBgColor;
+
+  overflow: scroll;
+
+  box-sizing: border-box;
+
+  border-radius: 5px;
+
+  margin: 2px;
+
+  display: grid;
+  grid-auto-rows: 220px;
+  grid-template-columns: repeat(auto-fit, 220px);
+}
+
+.imagebox {
+  position: relative;
+
+  border: 1px solid $boxBorderColor;
+  border-radius: 5px;
+
+  box-sizing: border-box;
+  margin: 5px;
+
+  width: 220px;
+  height: 220px;
+
+  z-index: 5;
+
+  opacity: 1.0;
+  background-color: white;
+
+  img {
+    margin: 10px;
+
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.imagebox.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*
+ * 空の子パネル
+ */
+.imagebox.empty {
+  border: none;
+  width: 220px;
+}
+
+.imagebox .tags {
+  display: none!important;
+
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+
+  z-index: 10;
+
+  box-sizing: border-box;
+  width: 180px;
+  height: 220px;
+
+  animation-duration: 0.3s;
+  animation-name: show-balloon;
+}
+
+.imagebox:hover .tags {
+  display: inline-block!important;
+}
