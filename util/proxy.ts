@@ -18,8 +18,7 @@ export default async (req, res) => {
     })
 
     if (!response.ok) {
-      const error = new Error(response.statusText)
-      error.response = response
+      const error = { response }
       throw error
     }
 
