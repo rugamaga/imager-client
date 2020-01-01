@@ -49,7 +49,7 @@ const Index = () => {
     setOffset(0)
     setAdult(value)
   }
-  const handleTagLink = ({ target: { value: value } }) => {
+  const handleTagLink = (value) => {
     setImages([])
     setOffset(0)
     setTag(
