@@ -7,9 +7,9 @@ import { RadioList } from './RadioList.js';
 import { ImageBox } from './ImageBox.js';
 import { TagBox } from './TagBox.js';
 
-const api = "https://image.rugamaga.dev";
-const images_endpoint = "https://image.rugamaga.dev/images";
-const thumbnails_endpoint = "https://image.rugamaga.dev/thumbnails";
+const api = "https://image.rugamaga.dev/api";
+const images_endpoint = "https://image.rugamaga.dev/api/images";
+const thumbnails_endpoint = "https://image.rugamaga.dev/api/thumbnails";
 
 const state = {
   images: [],
