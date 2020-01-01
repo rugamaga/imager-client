@@ -1,16 +1,23 @@
 import React from "react";
 
-export const RadioList = ({group, names, active, onClick}) =>
+const RadioInput = ({group, name, id, checked, onChange}) =>
+  <span key={id}>
+    <input type="radio" id={id} name={group} value={name} checked={checked} onChange={onChange} />
+    <label id={id}>{name}</label>
+  </span>
+
+export const RadioList = ({group, names, active, onChange}) =>
   <div>
     {
-      names.map( (name) => {
-        const id = `${group}_${name}`;
-        return (
-          <span>
-            <input type="radio" name={group} id={id} value={name} onClick={onClick} checked={name==active} />
-            <label id={id}>{name}</label>
-          </span>
-        );
-      } )
+      names
+        .map( (name) =>
+          <RadioInput
+            group={group}
+            name={name}
+            id={`${group}_${name}`}
+            checked={name == active}
+            onChange={onChange}
+          />
+        )
     }
   </div>
