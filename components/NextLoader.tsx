@@ -2,8 +2,8 @@ import React from 'react'
 
 const spinner_url = 'assets/spinner.svg';
 
-export const NextLoader = ({image_loading, onClick}) => {
-  if( image_loading ) {
+export const NextLoader = ({loading, onClick}) => {
+  if( loading ) {
     return (
       <div className="imagebox">
         <img src={spinner_url} />

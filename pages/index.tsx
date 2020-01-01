@@ -31,7 +31,7 @@ const Index = () => {
   const [order, setOrder] = useState("new")
   const [tag, setTag] = useState("")
   const [adult, setAdult] = useState("nonadult")
-  const [image_loading, setImageLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [offset, setOffset] = useState(0)
 
   const handleTagText =  ({ target: { value: value } }) => {
@@ -69,16 +69,16 @@ const Index = () => {
     const res = await fetch(url, {credentials: "same-origin"})
     const tags = await res.json()
     setSuggest(tags)
-    setImageLoading(false)
+    setLoading(false)
   }
 
   const requestImages = async () => {
-    setImageLoading(true)
+    setLoading(true)
     const url = `${api}/images?tag=${tag}&order=${order}&adult=${adult}&offset=${offset}`
     const res = await fetch(url, {credentials: "same-origin"})
     const results = await res.json()
     setImages(images.concat(results))
-    setImageLoading(false)
+    setLoading(false)
   }
 
   useDebounce(
@@ -134,7 +134,7 @@ const Index = () => {
       </div>
       <div className="result">
         { imgs }
-        <NextLoader image_loading={image_loading} onClick={handleNextLink} />
+        <NextLoader loading={loading} onClick={handleNextLink} />
       </div>
     </div>
   );
