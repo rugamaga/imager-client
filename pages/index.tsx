@@ -26,72 +26,74 @@ const images_endpoint = "/api/images";
 const thumbnails_endpoint = "/api/thumbnails";
 
 const Index = () => {
-  const [state, setState] = useState({
-    images: [],
-    suggest_tags: [],
-    order: "new",
-    tag: "",
-    adult: "nonadult",
-    image_loading: false
-  });
+  const [images, setImages] = useState([])
+  const [suggest, setSuggest] = useState([])
+  const [order, setOrder] = useState("new")
+  const [tag, setTag] = useState("")
+  const [adult, setAdult] = useState("nonadult")
+  const [image_loading, setImageLoading] = useState(false)
+  const [offset, setOffset] = useState(0)
 
-  const handleTagText =  ({ target: { value: tag } }) =>
-    setState({...state, tag: tag})
-  const handleOrderRadio = ({ target: { value: order } }) =>
-    setState({...state, order: order})
-  const handleAdultRadio = ({ target: { value: adult } }) =>
-    setState({...state, adult: adult})
-  const handleTagLink = ({ target: { value: tag } }) =>
-    setState({
-      ...state,
-      tag:
-        state
-          .tag
-          .split(/\s+/)
-          .filter(item => item.trim())
-          .concat([tag])
-          .join(' ')
-    })
-  const handleNextLink = () => {}
+  const handleTagText =  ({ target: { value: value } }) => {
+    setImages([])
+    setOffset(0)
+    setTag(value)
+  }
+  const handleOrderRadio = ({ target: { value: value } }) => {
+    setImages([])
+    setOffset(0)
+    setOrder(value)
+  }
+  const handleAdultRadio = ({ target: { value: value } }) => {
+    setImages([])
+    setOffset(0)
+    setAdult(value)
+  }
+  const handleTagLink = ({ target: { value: value } }) => {
+    setImages([])
+    setOffset(0)
+    setTag(
+      tag
+        .split(/\s+/)
+        .filter(item => item.trim())
+        .concat([value])
+        .join(' ')
+    )
+  }
+  const handleNextLink = () => {
+    setOffset(images.length)
+  }
 
-  const requestSuggestTags = async () => {
-    const url = `${api}/tags?prefix=${state.tag.split(/\s+/).slice(-1)[0]}`
+  const requestSuggest = async () => {
+    const url = `${api}/tags?prefix=${tag.split(/\s+/).slice(-1)[0]}`
     const res = await fetch(url, {credentials: "same-origin"})
     const tags = await res.json()
-    setState({
-      ...state,
-      suggest_tags: state.images.concat(tags),
-      image_loading: false,
-    })
+    setSuggest(tags)
+    setImageLoading(false)
   }
+
   const requestImages = async () => {
-    setState({
-      ...state,
-      image_loading: true,
-    })
-    const url = `${api}/images?tag=${state.tag}&order=${state.order}&adult=${state.adult}&offset=${state.images.length}`
+    setImageLoading(true)
+    const url = `${api}/images?tag=${tag}&order=${order}&adult=${adult}&offset=${offset}`
     const res = await fetch(url, {credentials: "same-origin"})
-    const images = await res.json()
-    setState({
-      ...state,
-      images: state.images.concat(images),
-      image_loading: false,
-    })
+    const results = await res.json()
+    setImages(images.concat(results))
+    setImageLoading(false)
   }
 
   useDebounce(
-    requestSuggestTags,
+    requestSuggest,
     100,
-    [state.tag, state.order, state.adult]
+    [tag, order, adult]
   )
 
   useDebounce(
     requestImages,
     400,
-    [state.tag, state.order, state.adult]
+    [tag, order, adult, offset]
   )
 
-  const imgs = state.images.map( image =>
+  const imgs = images.map( image =>
     <ImageBox
       src={`${thumbnails_endpoint}/${image.name}`}
       link={`${images_endpoint}/${image.name}`}
@@ -99,9 +101,9 @@ const Index = () => {
       onSelectTag={handleTagLink}
     />
   )
-  const suggest_tags =
+  const tag_box =
     <TagBox
-      tags={state.suggest_tags}
+      tags={suggest}
       onSelectTag={handleTagLink}
     />;
 
@@ -109,7 +111,7 @@ const Index = () => {
     <RadioList
       group="order"
       names={['new', 'old', 'random']}
-      active={state.order}
+      active={order}
       onChange={handleOrderRadio}
     />
 
@@ -117,7 +119,7 @@ const Index = () => {
     <RadioList
       group="adult"
       names={['nonadult', 'adult', 'nontags', 'all']}
-      active={state.adult}
+      active={adult}
       onChange={handleAdultRadio}
     />
 
@@ -125,14 +127,14 @@ const Index = () => {
     <div className="container">
       <h1>imager</h1>
       <div className="search">
-        <SearchBox value={state.tag} onChange={handleTagText} />
+        <SearchBox value={tag} onChange={handleTagText} />
         <OrderList />
         <AdultList />
-        { suggest_tags }
+        { tag_box }
       </div>
       <div className="result">
         { imgs }
-        <NextLoader image_loading={state.image_loading} onClick={handleNextLink} />
+        <NextLoader image_loading={image_loading} onClick={handleNextLink} />
       </div>
     </div>
   );
