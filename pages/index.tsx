@@ -64,12 +64,13 @@ const Index = () => {
   const handleTagLink = (value) => {
     setImages([])
     setOffset(0)
-    const newtag = tag
+    replaceQuery({
+      tag: tag
         .split(/\s+/)
         .filter(item => item.trim())
         .concat([value])
         .join(' ')
-    replaceQuery({tag: newtag})
+    })
   }
   const handleNextLink = () => {
     setOffset(images.length)
