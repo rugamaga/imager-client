@@ -1,7 +1,7 @@
 import React from 'react'
 
 export const SearchBox = ({value, onChange}) => (
-  <form noValidate onSubmit={() => false} className="searchbox sbx">
+  <form noValidate onSubmit={e => e.preventDefault()} className="searchbox sbx">
     <div role="search" className="sbx__wrapper">
       <input
         type="search"
