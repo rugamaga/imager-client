@@ -81,7 +81,6 @@ const Index = () => {
     const res = await fetch(url, {credentials: "same-origin"})
     const tags = await res.json()
     setSuggest(tags)
-    setLoading(false)
   }
 
   const requestImages = async () => {
