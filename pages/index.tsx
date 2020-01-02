@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 
 import '../styles/main.scss'
@@ -26,39 +27,49 @@ const images_endpoint = "/api/images";
 const thumbnails_endpoint = "/api/thumbnails";
 
 const Index = () => {
+  const router = useRouter()
+  const tag = (router.query.tag || "") as String
+  const order = router.query.order || "new"
+  const adult = router.query.adult || "nonadult"
+
   const [images, setImages] = useState([])
   const [suggest, setSuggest] = useState([])
-  const [order, setOrder] = useState("new")
-  const [tag, setTag] = useState("")
-  const [adult, setAdult] = useState("nonadult")
   const [loading, setLoading] = useState(false)
   const [offset, setOffset] = useState(0)
 
+  const replaceQuery = (query) => {
+    router.replace({
+      pathname: '/',
+      query: {
+        ...router.query,
+        ...query,
+      }
+    })
+  }
   const handleTagText =  ({ target: { value: value } }) => {
     setImages([])
     setOffset(0)
-    setTag(value)
+    replaceQuery({tag: value})
   }
   const handleOrderRadio = ({ target: { value: value } }) => {
     setImages([])
     setOffset(0)
-    setOrder(value)
+    replaceQuery({order: value})
   }
   const handleAdultRadio = ({ target: { value: value } }) => {
     setImages([])
     setOffset(0)
-    setAdult(value)
+    replaceQuery({adult: value})
   }
   const handleTagLink = (value) => {
     setImages([])
     setOffset(0)
-    setTag(
-      tag
+    const newtag = tag
         .split(/\s+/)
         .filter(item => item.trim())
         .concat([value])
         .join(' ')
-    )
+    replaceQuery({tag: newtag})
   }
   const handleNextLink = () => {
     setOffset(images.length)
