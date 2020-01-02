@@ -6,7 +6,7 @@ export const SearchBox = ({value, onChange}) => (
       <input
         type="search"
         name="search"
-        defaultValue={value}
+        value={value}
         onChange={onChange}
         placeholder="tag search"
         autoComplete="off"
