@@ -16,14 +16,14 @@
     "@zeit/next-sass": "^1.0.1",
     "isomorphic-unfetch": "^3.0.0",
     "next": "9.1.6",
-    "next-images": "^1.2.0",
+    "next-images": "^1.3.0",
     "node-sass": "^4.13.0",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "unfetch": "^4.1.0"
   },
   "devDependencies": {
-    "@types/node": "^12.12.21",
+    "@types/node": "^12.12.24",
     "@types/react": "^16.9.17",
     "typescript": "^3.7.3"
   }
