@@ -28,9 +28,9 @@ const thumbnails_endpoint = "/api/thumbnails";
 
 const Index = () => {
   const router = useRouter()
-  const tag = (router.query.tag || "") as String
-  const order = router.query.order || "new"
-  const adult = router.query.adult || "nonadult"
+  const tag = (router.query.tag ?? "") as String
+  const order = router.query.order ?? "new"
+  const adult = router.query.adult ?? "nonadult"
 
   const [images, setImages] = useState([])
   const [suggest, setSuggest] = useState([])
